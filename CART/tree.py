@@ -12,6 +12,10 @@ class DecisionTree:
         self.root_node: Node = Node()
 
     def count_gini_split(self, left_target, right_target) -> float:
+        """
+            считаем коэф gini split из gini из левой и правой
+            чем мееньше, тем лучше разделение
+        """
         total_size = left_target.size + right_target.size
         left_part = left_target.size / total_size
         right_part = right_target.size/total_size
@@ -47,6 +51,10 @@ class DecisionTree:
     @staticmethod
     def split(data: np.ndarray, target: np.ndarray,
               threshold: float, feature: int) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        """
+            разделяем массив на 2 части по которой лучше разделить
+            Выбираем характеристику и порог
+        """
         left_target = []
         right_target = []
         left_data = []
@@ -69,7 +77,7 @@ class DecisionTree:
 
     def process_tree(self, data: np.ndarray, target: np.ndarray, node: Node, depth: int = 0) -> None:
         if self.need_to_stop(target=target, depth=depth):
-            classes, counts = np.unique(target, return_counts=True)
+            classes, counts = np.unique(target, return_counts=True)  # сколько осталось одинаковых классов в target
             decision = classes[np.where(counts == max(counts))][0]
             node.is_leaf = True
             node.decision = decision
