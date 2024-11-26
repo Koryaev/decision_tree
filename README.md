@@ -33,3 +33,14 @@
 - "Purchased": 0 или 1 указано при нажатии на объявление.
 
 [Ссылка на датасет](https://www.kaggle.com/datasets/jahnveenarang/cvdcvd-vd)
+
+# t-SNE
+
+готовый алгоритм из slylearn:
+
+![orig](images/orig.png)
+
+
+собственный алгоритм:
+
+![orig](images/custom.png)

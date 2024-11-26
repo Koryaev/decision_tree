@@ -4,3 +4,4 @@ matplotlib==3.9.2
 loguru==0.7.2
 pydantic==1.10.10
 pydantic[dotenv]==1.10.10
+plotly
