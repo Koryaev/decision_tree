@@ -19,14 +19,10 @@ class CustomTSNE:
 
         sum_x = np.sum(np.square(self.X), axis=1)
         D = np.add(np.add(-2 * np.dot(self.X, self.X.T), sum_x).T, sum_x)
-        print('D', type(D))
         return D
 
     def compute_pij(self, D, perplexity=30.0, tol=1e-5):
-        """
-            Вычисляет матрицу вероятностей P
-        """
-
+        """Вычисляет матрицу вероятностей P."""
         n = D.shape[0]
         P = np.zeros((n, n))
         beta = np.ones((n, 1))
@@ -79,9 +75,9 @@ class CustomTSNE:
         eigvals, eigvecs = np.linalg.eigh(cov)
         idx = np.argsort(eigvals)[::-1][:self.initial_dims]
         eigvecs = eigvecs[:, idx]
-        X = np.dot(self.X, eigvecs)
+        self.X = np.dot(self.X, eigvecs)
 
-        n, d = X.shape
+        n, d = self.X.shape
         Y = np.random.randn(n, self.no_dims)
         dY = np.zeros((n, self.no_dims))
         iY = np.zeros((n, self.no_dims))
@@ -89,7 +85,7 @@ class CustomTSNE:
 
         # Вычисление матрицы вероятностей P
         D = self.compute_pairwise_distances()
-        P = self.compute_pij(D, self.perplexity)
+        P = self.compute_pij(D=D, perplexity=self.perplexity)
         P = P * 4.0  # Усиление начальных градиентов
         P = np.maximum(P, 1e-12)
 
