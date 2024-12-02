@@ -4,6 +4,7 @@ from loguru import logger
 from utils import load_csv, percent_similarity
 from sklearn.model_selection import train_test_split
 from settings import settings
+from metrics import calculate_metrics
 
 from CART.tree import DecisionTree
 
@@ -42,3 +43,14 @@ if __name__ == '__main__':
         predicted_list=[tree.root_node.find_decision(i) for i in x_test.tolist()]
     )
     logger.info(f'Predicted correctly: {percent_of_good_predicted:.2f}%')
+
+    metric = calculate_metrics(
+        y_true=y_test.tolist(),
+        y_pred=[tree.root_node.find_decision(i) for i in x_test.tolist()],
+    )
+
+    logger.info(f'Точность: {metric["precision"]}')
+    logger.info(f'Полнота: {metric["recall"]}')
+    logger.info(f'Выпады: {metric["fall_out"]}')
+    logger.info(f'F-мера: {metric["f1_score"]}')
+

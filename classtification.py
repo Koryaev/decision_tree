@@ -4,6 +4,9 @@ from sklearn.datasets import load_digits  # MNIST
 from sklearn.manifold import TSNE
 from loguru import logger
 from tsne.tsne import CustomTSNE
+from metrics import calculate_metrics
+from sklearn.cluster import KMeans
+
 
 
 def train_original_tsne(x: np.ndarray) -> np.ndarray:
@@ -109,6 +112,33 @@ def main():
     )
     custom_tsne_trained_x = custom_tsne.study()
     visualize_results(custom_tsne_trained_x, y, learning_type='custom')
+
+
+    # Выполняем кластеризацию на низкоразмерных данных
+    n_clusters = len(np.unique(y))
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+    y_pred_clusters = kmeans.fit_predict(custom_tsne_trained_x)
+
+    # 4. Назначаем метки для каждой кластеризации
+    cluster_to_label_map = {}
+    for cluster in set(y_pred_clusters):
+        # Выбираем классу в кластере как моду (самый частый элемент)
+        true_labels_in_cluster = y[y_pred_clusters == cluster]
+        most_common_label = np.bincount(true_labels_in_cluster).argmax()
+        cluster_to_label_map[cluster] = most_common_label
+
+    # Заменяем кластеры их метками для предсказания
+    y_pred = np.array([cluster_to_label_map[cluster] for cluster in y_pred_clusters])
+
+    metric = calculate_metrics(
+        y_true=y.tolist(),
+        y_pred=y_pred,
+    )
+
+    logger.info(f'Точность: {metric["precision"]}')
+    logger.info(f'Полнота: {metric["recall"]}')
+    logger.info(f'Выпады: {metric["fall_out"]}')
+    logger.info(f'F-мера: {metric["f1_score"]}')
 
 
 if __name__ == '__main__':
